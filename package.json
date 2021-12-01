@@ -1,0 +1,14 @@
+{
+  "name": "cybe-db",
+  "version": "0.0.0",
+  "types": "./dist/@types/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "main": "./dist/index.js",
+  "description": "DB for cybe-express",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^16.11.10"
+  }
+}
