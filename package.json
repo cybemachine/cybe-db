@@ -1,7 +1,8 @@
 {
   "name": "cybe-db",
-  "version": "0.0.0",
-  "types": "./dist/@types/index.d.ts",
+  "version": "0.0.3",
+  "types": "./dist/index.d.ts",
+  "type": "module",
   "files": [
     "/dist"
   ],
