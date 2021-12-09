@@ -1,15 +1,21 @@
 {
   "name": "cybe-db",
-  "version": "0.0.3",
-  "types": "./dist/index.d.ts",
-  "type": "module",
-  "files": [
-    "/dist"
-  ],
+  "version": "0.1.0",
+  "types": "./@types/index.d.ts",
   "main": "./dist/index.js",
+  "files": [
+    "/dist",
+    "/ts",
+    "/@types"
+  ],
+  "scripts": {
+    "prepublish": "tsc"
+  },
   "description": "DB for cybe-express",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^16.11.10"
+    "@types/jest": "^27.0.3",
+    "@types/node": "^16.11.12",
+    "cybe-db": "^0.0.7"
   }
 }

@@ -1,0 +1,19 @@
+{
+    "include": [
+        "./ts/**.ts"
+    ],
+    "compilerOptions": {
+        "target": "ES3",
+        "outDir": "./dist",
+        "declarationDir": "./@types",
+        "sourceMap": true,
+        "declaration": true,
+        "removeComments": true,
+        "diagnostics": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "emitBOM": true,
+        "declarationMap": true,
+        "moduleResolution": "node"
+    }
+}
