@@ -4,9 +4,9 @@
         "./ts/v*/*.ts"
     ],
     "compilerOptions": {
-        "target": "ESnext",
-        "outDir": "./dist/esnext",
-        "declarationDir": "./dist/esnext/@types",
+        "target": "ES2015",
+        "outDir": "./dist/es5",
+        "declarationDir": "./dist/es5/@types",
         "inlineSourceMap": true,
         "declaration": true,
         "declarationMap": true,
