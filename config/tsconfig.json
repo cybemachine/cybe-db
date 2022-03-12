@@ -1,12 +1,11 @@
 {
     "include": [
-        "./ts/*.ts",
-        "./ts/v*/*.ts"
+        "../app/ts/*.ts"
     ],
     "compilerOptions": {
-        "target": "ES2015",
-        "outDir": "./dist/es5",
-        "declarationDir": "./dist/es5/@types",
+        "target": "ESnext",
+        "outDir": "../app",
+        "declarationDir": "./app/@types",
         "inlineSourceMap": true,
         "declaration": true,
         "declarationMap": true,

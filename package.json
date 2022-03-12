@@ -2,13 +2,14 @@
   "license": "MIT",
   "type": "module",
   "name": "cybe-db",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "main": "./dist/index.js",
 	"exports": "./dist/index.js",
   "types": "./@types/index.d.ts",
   "description": "DB for cybe-express",
   "scripts": {
-    "prepublish": "tsc"
+    "prepublish": "tsc",
+    "test": "jest"
   },
   "devDependencies": {
     "@types/chance": "^1.1.3",
