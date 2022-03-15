@@ -1,12 +1,13 @@
 {
     "files.exclude": {
         "**/.git": true,
-        "yarn.lock": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
+        "**/package-lock.json": true,
         "**/node_modules": true,
-        "**/*.js": {
-            "when": "$(basename).ts"
-        },
+        "**/archive": true
     }
 }

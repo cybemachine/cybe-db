@@ -41,7 +41,7 @@ export class DB {
     opt: Config;
     path: string;
     backupdir: string;
-    #data: Array<{ id: string, [x: string]: any, [x: number]: any }> = [];
+    data: Array<{ id: string, [x: string]: any, [x: number]: any }> = [];
     debugger?: Debugger;
 
     constructor(path: string = './index.json', options: Config = new Config()) {
@@ -50,13 +50,13 @@ export class DB {
 
         this.opt = options;
         this.path = resolve(path);
-        this.backupdir = resolve(dirname(path), './backup');
+        this.backupdir = resolve(path, '../backup');
 
         mkdir(this.backupdir)
 
         if (options.debug) this.debugger = new Debugger(resolve(this.backupdir, './debug.json'));
 
-        if (fs.existsSync(this.path)) this.JSON(JSON.parse(fs.readFileSync(this.path, "utf-8")));
+        if (fs.existsSync(this.path)) { this.JSON(JSON.parse(fs.readFileSync(this.path, "utf-8"))); } else { fs.writeFileSync(this.path, '[]'); }
 
         this.save();
 
@@ -87,17 +87,17 @@ export class DB {
     has(id: string) {
         if (this.opt.debug) this.debugger.newdebug("Debug", `Finding if ${id} exists`);
 
-        return this.#data.some(x => x.id == id);
+        return this.data.some(x => x.id == id);
     }
 
     get(id: string) {
         if (this.opt.debug) this.debugger.newdebug("Debug", `Fetching ${id}`);
 
-        return this.#data.find(x => x.id == id);
+        return this.data.find(x => x.id == id);
     }
 
-    set(id = new Chance().guid(), val: object) {
-        this.#data.push({ id, ...val });
+    set(id = new Chance().guid(), val: any) {
+        this.data.push({ id, val });
 
         if (this.opt.debug) this.debugger.newdebug("Debug", `Setting ${id} to ${val}`);
         if (this.opt.writeonchange) this.save();
@@ -106,7 +106,7 @@ export class DB {
     }
 
     deleteAll() {
-        this.#data = [];
+        this.data = [];
 
         if (this.opt.debug) this.debugger.newdebug("Debug", `Deleting all`);
         if (this.opt.writeonchange) this.save();
@@ -115,7 +115,7 @@ export class DB {
     }
 
     delete(id: string) {
-        this.#data = this.#data.filter(x => x.id != id);
+        this.data = this.data.filter(x => x.id != id);
 
         if (this.opt.debug) this.debugger.newdebug("Debug", `Deleting ${id}`);
         if (this.opt.writeonchange) this.save();
@@ -126,14 +126,14 @@ export class DB {
     toString() {
         if (this.opt.debug) this.debugger.newdebug("Debug", `Converting to string`);
 
-        return this.opt.humanReadable ? JSON.stringify(this.#data, null, 4) : JSON.stringify(this.#data);
+        return this.opt.humanReadable ? JSON.stringify(this.data, null, 4) : JSON.stringify(this.data);
     }
 
     JSON(storage?: any[]) {
-        if (this.opt.debug) this.debugger.newdebug("Debug", storage ? 'returning JSON' : `replacing ${this.#data} -> ${storage}`);
+        if (this.opt.debug) this.debugger.newdebug("Debug", storage ? 'returning JSON' : `replacing ${this.data} -> ${storage}`);
 
-        if (!storage) return this.#data;
-        return this.#data = storage;
+        if (!storage) return this.data;
+        return this.data = storage;
     }
 };
 

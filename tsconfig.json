@@ -1,16 +1,16 @@
 {
     "include": [
-        "../app/ts/*.ts"
+        "./app/*.ts"
     ],
     "compilerOptions": {
         "target": "ESnext",
-        "outDir": "../app",
-        "declarationDir": "./app/@types",
-        "inlineSourceMap": true,
+        "outDir": "./dist",
         "declaration": true,
         "declarationMap": true,
         "moduleResolution": "node",
-        "allowSyntheticDefaultImports": true
+        "declarationDir": "./dist/@types",
+        "allowSyntheticDefaultImports": true,
+        "inlineSourceMap": true
     },
     "exclude": [
         "node_modules"

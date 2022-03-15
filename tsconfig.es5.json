@@ -1,17 +1,16 @@
 {
     "include": [
-        "./ts/*.ts",
-        "./ts/v*/*.ts"
+        "./app/*.ts"
     ],
     "compilerOptions": {
         "target": "ES2015",
-        "outDir": "../app/es5",
-        "declarationDir": "../app/es5/@types",
-        "inlineSourceMap": true,
         "declaration": true,
         "declarationMap": true,
+        "outDir": "./dist/es5",
         "moduleResolution": "node",
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "declarationDir": "./dist/es5/@types",
+        "sourceMap": true
     },
     "exclude": [
         "node_modules"
