@@ -2,7 +2,7 @@ import fs from "fs";
 import Chance from 'chance';
 import AdmZip from "adm-zip";
 import Debugger from "./emitdebugger";
-import { resolve, sep, dirname, extname } from "path";
+import { resolve, sep, extname } from "path";
 
 function mkdir(path: string) {
     const dirs = path.split(sep);
@@ -27,14 +27,11 @@ function zip(backup: string, backupdir: string[]) {
     });
 }
 
-export class Config {
-    writeonchange: boolean;
-    humanReadable: boolean;
-    saveInterval: number;
-    debug: boolean;
-    constructor(writeonchange?: boolean, humanReadable?: boolean, saveInterval?: number, debug?: boolean) {
-        Object.assign(this, Object.assign({ writeonchange, humanReadable, saveInterval, debug }, { writeonchange: !1, humanReadable: !1, saveInterval: null, debug: !1 }));
-    }
+interface Config {
+    writeonchange?: boolean,
+    humanReadable?: boolean,
+    saveInterval?: number,
+    debug?: boolean
 }
 
 export class DB {
@@ -44,11 +41,17 @@ export class DB {
     data: Array<{ id: string, [x: string]: any, [x: number]: any }> = [];
     debugger?: Debugger;
 
-    constructor(path: string = './index.json', options: Config = new Config()) {
+    constructor(path: string = './index.json', options: Config = {
+        writeonchange: !1,
+        humanReadable: !1,
+        saveInterval: null,
+        debug: !1
+    }) {
         if (!extname(path).startsWith('.'))
             path = resolve(path, 'db.json');
 
-        this.opt = options;
+        this.opt = Object.assign(options, { writeonchange: !1, humanReadable: !1, saveInterval: null, debug: !1 })
+
         this.path = resolve(path);
         this.backupdir = resolve(path, '../backup');
 

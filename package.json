@@ -2,14 +2,12 @@
   "license": "MIT",
   "type": "module",
   "name": "cybe-db",
-  "version": "0.2.4",
+  "version": "0.3.0-alpha",
   "main": "./dist/index.js",
-  "exports": "./dist/index.js",
-  "types": "./@types/index.d.ts",
+  "types": "./dist/@types/index.d.ts",
   "description": "DB for cybe-express",
   "scripts": {
-    "prepublish": "tsc",
-    "test": "cd tests && node --es-module-specifier-resolution=node ."
+    "prepublish": "tsc"
   },
   "devDependencies": {
     "@types/chance": "^1.1.3",
@@ -18,10 +16,7 @@
   "dependencies": {
     "adm-zip": "^0.5.9",
     "chalk": "^5.0.1",
-    "chalk-animation": "^1.3.0",
     "chance": "^1.1.8",
-    "figlet": "^1.5.2",
-    "gradient-string": "^2.0.0",
     "inquirer": "^8.2.1"
   }
 }
