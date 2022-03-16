@@ -1,25 +1,30 @@
-import fs from 'fs';
-export default class Debugger {
-    file;
-    data = [];
-    constructor(file = `${process.cwd()}/debug.json`) {
-        const self = this;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var fs_1 = require("fs");
+var Debugger = /** @class */ (function () {
+    function Debugger(file) {
+        var _this = this;
+        if (file === void 0) { file = process.cwd() + "/debug.json"; }
+        this.data = [];
+        var self = this;
         this.file = file;
-        setInterval(() => {
+        setInterval(function () {
             self.data || (self.data = []);
             if (self.data.length >= 17)
-                this.save();
+                _this.save();
         }, 1000);
     }
-    save() {
+    Debugger.prototype.save = function () {
         if (this.data.length < 17)
             return;
-        const data = this.data.join('');
+        var data = this.data.join('');
         this.data = [];
-        fs.writeFileSync(this.file, data);
-    }
-    newdebug(method, data) {
-        this.data.push(`${new Date} ${method} ${data}\n`);
-    }
-}
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZW1pdGRlYnVnZ2VyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vYXBwL2VtaXRkZWJ1Z2dlci50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxPQUFPLEVBQUUsTUFBTSxJQUFJLENBQUM7QUFFcEIsTUFBTSxDQUFDLE9BQU8sT0FBTyxRQUFRO0lBQ3pCLElBQUksQ0FBUztJQUNiLElBQUksR0FBYSxFQUFFLENBQUE7SUFDbkIsWUFBWSxJQUFJLEdBQUcsR0FBRyxPQUFPLENBQUMsR0FBRyxFQUFFLGFBQWE7UUFDNUMsTUFBTSxJQUFJLEdBQWEsSUFBSSxDQUFDO1FBQzVCLElBQUksQ0FBQyxJQUFJLEdBQUcsSUFBSSxDQUFDO1FBRWpCLFdBQVcsQ0FBQyxHQUFHLEVBQUU7WUFDYixJQUFJLENBQUMsSUFBSSxJQUFJLENBQUMsSUFBSSxDQUFDLElBQUksR0FBRyxFQUFFLENBQUMsQ0FBQztZQUU5QixJQUFJLElBQUksQ0FBQyxJQUFJLENBQUMsTUFBTSxJQUFJLEVBQUU7Z0JBQUUsSUFBSSxDQUFDLElBQUksRUFBRSxDQUFDO1FBQzVDLENBQUMsRUFBRSxJQUFJLENBQUMsQ0FBQTtJQUNaLENBQUM7SUFFRCxJQUFJO1FBQ0EsSUFBSSxJQUFJLENBQUMsSUFBSSxDQUFDLE1BQU0sR0FBRyxFQUFFO1lBQUUsT0FBTztRQUVsQyxNQUFNLElBQUksR0FBRyxJQUFJLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxFQUFFLENBQUMsQ0FBQztRQUNoQyxJQUFJLENBQUMsSUFBSSxHQUFHLEVBQUUsQ0FBQztRQUVmLEVBQUUsQ0FBQyxhQUFhLENBQUMsSUFBSSxDQUFDLElBQUksRUFBRSxJQUFJLENBQUMsQ0FBQztJQUN0QyxDQUFDO0lBRUQsUUFBUSxDQUFDLE1BQXlCLEVBQUUsSUFBWTtRQUM1QyxJQUFJLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxHQUFHLElBQUksSUFBSSxJQUFJLE1BQU0sSUFBSSxJQUFJLElBQUksQ0FBQyxDQUFDO0lBQ3RELENBQUM7Q0FDSiJ9
+        fs_1.default.writeFileSync(this.file, data);
+    };
+    Debugger.prototype.newdebug = function (method, data) {
+        this.data.push(new Date + " " + method + " " + data + "\n");
+    };
+    return Debugger;
+}());
+exports.default = Debugger;
+//# sourceMappingURL=emitdebugger.js.map
