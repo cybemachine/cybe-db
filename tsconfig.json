@@ -1,0 +1,18 @@
+{
+    "include": [
+        "./app/*.ts"
+    ],
+    "compilerOptions": {
+        "target": "ES5",
+        "declaration": true,
+        "declarationMap": true,
+        "outDir": "./dist",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "declarationDir": "./dist/@types",
+        "sourceMap": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
