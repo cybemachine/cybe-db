@@ -1,33 +1,28 @@
 import Debugger from "./emitdebugger";
-interface Config {
+export interface Config {
     writeonchange?: boolean;
     humanReadable?: boolean;
     saveInterval?: number;
     debug?: boolean;
 }
-export declare class DB {
+declare type Innerdata<A> = A & {
+    id: string;
+};
+export declare class DB<T> {
     opt: Config;
     path: string;
     backupdir: string;
-    data: Array<{
-        id: string;
-        [x: string]: any;
-        [x: number]: any;
-    }>;
+    data: Innerdata<T>[];
     debugger?: Debugger;
     constructor(path?: string, options?: Config);
     save(): this;
     has(id: string): boolean;
-    get(id: string): {
-        [x: string]: any;
-        [x: number]: any;
-        id: string;
-    };
-    set(id: string, val: any): this;
+    get(id: string): Innerdata<T>;
+    set(id: string, val: T): this;
     deleteAll(): this;
     delete(id: string): this;
     toString(): string;
-    JSON(storage?: any[]): any[];
+    JSON(storage?: Innerdata<T>[]): Innerdata<T>[];
 }
 export default DB;
 //# sourceMappingURL=index.d.ts.map

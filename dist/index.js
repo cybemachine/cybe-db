@@ -2,8 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DB = void 0;
 var fs_1 = require("fs");
-var chance_1 = require("chance");
-var adm_zip_1 = require("adm-zip");
+var crypto_1 = require("crypto");
 var emitdebugger_1 = require("./emitdebugger");
 var path_1 = require("path");
 function mkdir(path) {
@@ -17,41 +16,35 @@ function mkdir(path) {
         }
     });
 }
-function zip(backup, backupdir) {
-    //@ts-ignore
-    var zip = new adm_zip_1.default();
-    backupdir.forEach(function (f, i) {
-        var file = path_1.resolve(backup, f);
-        zip.addLocalFile(file);
-        fs_1.default.rmSync(file);
-        if (i == backupdir.length - 1)
-            zip.writeZip(path_1.resolve(backup, Date.now() + ".zip"));
-    });
-}
 var DB = /** @class */ (function () {
     function DB(path, options) {
         var _this = this;
-        if (path === void 0) { path = './index.json'; }
+        if (path === void 0) { path = "./index.json"; }
         if (options === void 0) { options = {
             writeonchange: !1,
             humanReadable: !1,
             saveInterval: null,
-            debug: !1
+            debug: !1,
         }; }
         this.data = [];
-        if (!path_1.extname(path).startsWith('.'))
-            path = path_1.resolve(path, 'db.json');
-        this.opt = Object.assign(options, { writeonchange: !1, humanReadable: !1, saveInterval: null, debug: !1 });
+        if (!path_1.extname(path).startsWith("."))
+            path = path_1.resolve(path, "db.json");
+        this.opt = Object.assign(options, {
+            writeonchange: !1,
+            humanReadable: !1,
+            saveInterval: null,
+            debug: !1,
+        });
         this.path = path_1.resolve(path);
-        this.backupdir = path_1.resolve(path, '../backup');
+        this.backupdir = path_1.resolve(path, "../backup");
         mkdir(this.backupdir);
         if (options.debug)
-            this.debugger = new emitdebugger_1.default(path_1.resolve(this.backupdir, './debug.json'));
+            this.debugger = new emitdebugger_1.default(path_1.resolve(this.backupdir, "./debug.json"));
         if (fs_1.default.existsSync(this.path)) {
             this.JSON(JSON.parse(fs_1.default.readFileSync(this.path, "utf-8")));
         }
         else {
-            fs_1.default.writeFileSync(this.path, '[]');
+            fs_1.default.writeFileSync(this.path, "[]");
         }
         this.save();
         if (options.saveInterval)
@@ -59,12 +52,9 @@ var DB = /** @class */ (function () {
     }
     DB.prototype.save = function () {
         var self = this;
-        var date = new Date;
+        var date = new Date();
         var data = this.toString();
-        var files = fs_1.default.readdirSync(this.backupdir);
         fs_1.default.copyFileSync(this.path, path_1.resolve(this.backupdir, date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + ".json"));
-        if (files.length >= 3)
-            zip(this.backupdir, files);
         if (this.debugger)
             this.debugger.newdebug("Debug", "Saving " + data);
         fs_1.default.writeFile(this.path, data, function (Err) {
@@ -84,8 +74,10 @@ var DB = /** @class */ (function () {
         return this.data.find(function (x) { return x.id == id; });
     };
     DB.prototype.set = function (id, val) {
-        if (id === void 0) { id = new chance_1.default().guid(); }
-        this.data.push({ id: id, val: val });
+        if (id === void 0) { id = crypto_1.randomUUID(); }
+        this.data.push(Object.assign({
+            id: id
+        }, val));
         if (this.opt.debug)
             this.debugger.newdebug("Debug", "Setting " + id + " to " + val);
         if (this.opt.writeonchange)
@@ -111,18 +103,19 @@ var DB = /** @class */ (function () {
     DB.prototype.toString = function () {
         if (this.opt.debug)
             this.debugger.newdebug("Debug", "Converting to string");
-        return this.opt.humanReadable ? JSON.stringify(this.data, null, 4) : JSON.stringify(this.data);
+        return this.opt.humanReadable
+            ? JSON.stringify(this.data, null, 4)
+            : JSON.stringify(this.data);
     };
     DB.prototype.JSON = function (storage) {
         if (this.opt.debug)
-            this.debugger.newdebug("Debug", storage ? 'returning JSON' : "replacing " + this.data + " -> " + storage);
+            this.debugger.newdebug("Debug", storage ? "returning JSON" : "replacing " + this.data + " -> " + storage);
         if (!storage)
             return this.data;
-        return this.data = storage;
+        return (this.data = storage);
     };
     return DB;
 }());
 exports.DB = DB;
-;
 exports.default = DB;
 //# sourceMappingURL=index.js.map
