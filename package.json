@@ -1,7 +1,7 @@
 {
   "license": "MIT",
   "name": "cybe-db",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "main": "./app/index.js",
   "types": "./@types/index.d.ts",
   "description": "DB for cybe-express",
