@@ -3,14 +3,13 @@
         "./app/*.ts"
     ],
     "compilerOptions": {
-        "target": "ES5",
+        "target": "ESNext",
         "declaration": true,
-        "declarationMap": true,
-        "outDir": "./dist",
+        "module": "commonjs",
+        "esModuleInterop": true,
         "moduleResolution": "node",
+        "declarationDir": "./@types",
         "allowSyntheticDefaultImports": true,
-        "declarationDir": "./dist/@types",
-        "sourceMap": true
     },
     "exclude": [
         "node_modules"

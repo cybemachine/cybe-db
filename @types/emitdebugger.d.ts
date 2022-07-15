@@ -3,6 +3,5 @@ export default class Debugger {
     data: string[];
     constructor(file?: string);
     save(): void;
-    newdebug(method: 'Error' | 'Debug', data: string): void;
+    newdebug(method: "Error" | "Debug", data: string): void;
 }
-//# sourceMappingURL=emitdebugger.d.ts.map

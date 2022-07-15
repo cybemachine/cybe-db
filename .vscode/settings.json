@@ -7,7 +7,9 @@
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
         "**/package-lock.json": true,
-        "**/node_modules": true,
-        "**/archive": true
+        "**/@types": true,
+        "**/*.js": {
+            "when": "$(basename).ts"
+        }
     }
 }

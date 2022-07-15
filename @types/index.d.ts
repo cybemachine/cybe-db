@@ -61,4 +61,3 @@ export declare class DB<T> {
     JSON(storage?: Innerdata<T>[]): Innerdata<T>[];
 }
 export default DB;
-//# sourceMappingURL=index.d.ts.map

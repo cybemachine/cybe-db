@@ -1,5 +1,4 @@
 import fs from "fs";
-import { randomUUID } from "crypto";
 import Debugger from "./emitdebugger";
 import { resolve, sep, extname } from "path";
 
@@ -36,23 +35,18 @@ export class DB<T> {
    * @param path path where file should be saved
    * @param options Options
    */
-  constructor(
-    path: string,
-    options: Config = {
-      writeonchange: !1,
-      humanReadable: !1,
-      saveInterval: null,
-      debug: !1,
-    }
-  ) {
+  constructor(path: string, options?: Config) {
     if (!extname(path).startsWith(".")) path = resolve(path, "db.json");
 
-    this.opt = Object.assign(options, {
-      writeonchange: !1,
-      humanReadable: !1,
-      saveInterval: null,
-      debug: !1,
-    });
+    if (!options)
+      options = {
+        writeonchange: !1,
+        humanReadable: !1,
+        saveInterval: null,
+        debug: !1,
+      };
+
+    this.opt = options;
 
     this.path = resolve(path);
     this.backupdir = resolve(path, "../backup");
@@ -60,7 +54,7 @@ export class DB<T> {
     mkdir(this.backupdir);
 
     if (options.debug)
-      this.debugger = new Debugger(resolve(this.backupdir, "./debug.json"));
+      this.debugger = new Debugger(resolve(this.backupdir, "./file.log"));
 
     if (fs.existsSync(this.path)) {
       this.JSON(JSON.parse(fs.readFileSync(this.path, "utf-8")));
@@ -125,7 +119,7 @@ export class DB<T> {
    * @param id id to save
    * @param val Document to save
    */
-  set(id = randomUUID(), val: T) {
+  set(id: string, val: T) {
     this.data.push(
       Object.assign(val, {
         id,
@@ -133,7 +127,7 @@ export class DB<T> {
     );
 
     if (this.opt.debug)
-      this.debugger.newdebug("Debug", `Setting ${id} to ${val}`);
+      this.debugger.newdebug("Debug", `Set ${id} to ${JSON.stringify(val)}`);
     if (this.opt.writeonchange) this.save();
 
     return this;
@@ -183,7 +177,7 @@ export class DB<T> {
     if (this.opt.debug)
       this.debugger.newdebug(
         "Debug",
-        storage ? "returning JSON" : `replacing ${this.data} -> ${storage}`
+        storage ? "returning JSON" : `replacing ${JSON.stringify(this.data)} -> ${JSON.stringify(storage)}`
       );
 
     if (!storage) return this.data;
