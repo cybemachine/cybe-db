@@ -101,7 +101,7 @@ class DB {
             id,
         }));
         if (this.opt.debug)
-            this.debugger.newdebug("Debug", `Setting ${JSON.stringify(id)} to ${JSON.stringify(val)}`);
+            this.debugger.newdebug("Debug", `Set ${id} to ${JSON.stringify(val)}`);
         if (this.opt.writeonchange)
             this.save();
         return this;
@@ -145,7 +145,7 @@ class DB {
      */
     JSON(storage) {
         if (this.opt.debug)
-            this.debugger.newdebug("Debug", storage ? "returning JSON" : `replacing ${this.data} -> ${storage}`);
+            this.debugger.newdebug("Debug", storage ? "returning JSON" : `replacing ${JSON.stringify(this.data)} -> ${JSON.stringify(storage)}`);
         if (!storage)
             return this.data;
         this.data = storage;

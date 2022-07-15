@@ -1,8 +1,8 @@
 {
   "license": "MIT",
   "name": "cybe-db",
-  "version": "0.4.1",
-  "main": "./dist/index.js",
+  "version": "0.4.2",
+  "main": "./app/index.js",
   "types": "./@types/index.d.ts",
   "description": "DB for cybe-express",
   "scripts": {
@@ -11,9 +11,5 @@
   "devDependencies": {
     "@types/jest": "^28.1.4",
     "@types/node": "^17.0.21"
-  },
-  "dependencies": {
-    "chalk": "^5.0.1",
-    "inquirer": "^8.2.1"
   }
 }
