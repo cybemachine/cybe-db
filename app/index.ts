@@ -56,16 +56,12 @@ export class DB<T> {
     if (options.debug)
       this.debugger = new Debugger(resolve(this.backupdir, "./file.log"));
 
-    if (fs.existsSync(this.path)) {
-      this.JSON(JSON.parse(fs.readFileSync(this.path, "utf-8")));
-    } else {
-      fs.writeFileSync(this.path, "[]");
-    }
+    if (fs.existsSync(this.path)) this.JSON(JSON.parse(fs.readFileSync(this.path, "utf-8")));
+    else fs.writeFileSync(this.path, "[]");
 
     this.save();
 
-    if (options.saveInterval)
-      setInterval(() => this.save(), this.opt.saveInterval);
+    if (options.saveInterval) setInterval(() => this.save(), this.opt.saveInterval);
   }
 
   /**
