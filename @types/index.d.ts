@@ -11,7 +11,6 @@ export type Innerdata<A> = A & {
 export declare class DB<T> {
     opt: Config;
     path: string;
-    backupdir: string;
     data: Innerdata<T>[];
     debugger?: Debugger;
     /**
@@ -21,7 +20,7 @@ export declare class DB<T> {
      */
     constructor(path: string, options?: Config);
     /**
-     * save file into both backupdir and the current file path
+     * save file into the current file path
      */
     save(): this;
     /**

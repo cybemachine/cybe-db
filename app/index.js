@@ -7,21 +7,9 @@ exports.DB = void 0;
 const fs_1 = __importDefault(require("fs"));
 const emitdebugger_1 = __importDefault(require("./emitdebugger"));
 const path_1 = require("path");
-function mkdir(path) {
-    const dirs = path.split(path_1.sep);
-    return new Promise((r, j) => {
-        const length = dirs.length;
-        for (var i = 0; i < length; i++) {
-            let p = dirs.slice(0, i + 1).join(path_1.sep);
-            fs_1.default.existsSync(p) || fs_1.default.mkdirSync(p);
-            i == dirs.length - 1 && r(0);
-        }
-    });
-}
 class DB {
     opt;
     path;
-    backupdir;
     data = [];
     debugger;
     /**
@@ -41,10 +29,8 @@ class DB {
             };
         this.opt = options;
         this.path = (0, path_1.resolve)(path);
-        this.backupdir = (0, path_1.resolve)(path, "../backup");
-        mkdir(this.backupdir);
         if (options.debug)
-            this.debugger = new emitdebugger_1.default((0, path_1.resolve)(this.backupdir, "./file.log"));
+            this.debugger = new emitdebugger_1.default((0, path_1.resolve)(process.cwd(), "./file.log"));
         if (fs_1.default.existsSync(this.path))
             this.JSON(JSON.parse(fs_1.default.readFileSync(this.path, "utf-8")));
         else
@@ -54,15 +40,12 @@ class DB {
             setInterval(() => this.save(), this.opt.saveInterval);
     }
     /**
-     * save file into both backupdir and the current file path
+     * save file into the current file path
      */
     save() {
         const self = this;
         const date = new Date();
         const data = this.toString();
-        const backupfile = (0, path_1.resolve)(this.backupdir, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.json`);
-        if (fs_1.default.existsSync(this.path))
-            fs_1.default.copyFileSync(this.path, backupfile);
         if (this.debugger)
             this.debugger.newdebug("Debug", `Saving ${data}`);
         fs_1.default.writeFile(this.path, data, (Err) => {

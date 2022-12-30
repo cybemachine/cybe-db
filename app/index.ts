@@ -2,18 +2,6 @@ import fs from "fs";
 import Debugger from "./emitdebugger";
 import { resolve, sep, extname } from "path";
 
-function mkdir(path: string) {
-  const dirs = path.split(sep);
-  return new Promise<number>((r, j) => {
-    const length = dirs.length;
-    for (var i = 0; i < length; i++) {
-      let p = dirs.slice(0, i + 1).join(sep);
-      fs.existsSync(p) || fs.mkdirSync(p);
-      i == dirs.length - 1 && r(0);
-    }
-  });
-}
-
 export interface Config {
   writeonchange?: boolean;
   humanReadable?: boolean;
@@ -26,7 +14,6 @@ export type Innerdata<A> = A & { id: string };
 export class DB<T> {
   opt: Config;
   path: string;
-  backupdir: string;
   data: Innerdata<T>[] = [];
   debugger?: Debugger;
 
@@ -49,12 +36,9 @@ export class DB<T> {
     this.opt = options;
 
     this.path = resolve(path);
-    this.backupdir = resolve(path, "../backup");
-
-    mkdir(this.backupdir);
 
     if (options.debug)
-      this.debugger = new Debugger(resolve(this.backupdir, "./file.log"));
+      this.debugger = new Debugger(resolve(process.cwd(), "./file.log"));
 
     if (fs.existsSync(this.path)) this.JSON(JSON.parse(fs.readFileSync(this.path, "utf-8")));
     else fs.writeFileSync(this.path, "[]");
@@ -65,18 +49,12 @@ export class DB<T> {
   }
 
   /**
-   * save file into both backupdir and the current file path
+   * save file into the current file path
    */
   save() {
     const self = this;
     const date = new Date();
     const data = this.toString();
-    const backupfile = resolve(
-      this.backupdir,
-      `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.json`
-    );
-
-    if(fs.existsSync(this.path)) fs.copyFileSync(this.path, backupfile);
 
     if (this.debugger) this.debugger.newdebug("Debug", `Saving ${data}`);
 

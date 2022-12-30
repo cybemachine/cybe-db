@@ -17,12 +17,18 @@ it("set", () => {
   datastore.set("name", {
     data: 1,
   });
-  assert.equal(datastore.data, [{ id: "name", data: 1 }]);
+  assert.equal(
+    JSON.stringify(datastore.data),
+    JSON.stringify([{ data: 1, id: "name" }])
+  );
 });
 
 it("get", () => {
   datastore.data = [{ id: "name", data: 1 }];
-  assert.equal(datastore.get("name"), { id: "name", data: 1 });
+  assert.equal(
+    JSON.stringify(datastore.get("name")),
+    JSON.stringify({ id: "name", data: 1 })
+  );
 });
 
 it("delete", () => {
