@@ -5,7 +5,7 @@ export interface Config {
     saveInterval?: number;
     debug?: boolean;
 }
-export declare type Innerdata<A> = A & {
+export type Innerdata<A> = A & {
     id: string;
 };
 export declare class DB<T> {

@@ -76,7 +76,7 @@ export class DB<T> {
       `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.json`
     );
 
-    fs.copyFileSync(this.path, backupfile);
+    if(fs.existsSync(this.path)) fs.copyFileSync(this.path, backupfile);
 
     if (this.debugger) this.debugger.newdebug("Debug", `Saving ${data}`);
 

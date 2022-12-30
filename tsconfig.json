@@ -10,6 +10,7 @@
         "moduleResolution": "node",
         "declarationDir": "./@types",
         "allowSyntheticDefaultImports": true,
+        "skipLibCheck": true
     },
     "exclude": [
         "node_modules"

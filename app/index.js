@@ -30,8 +30,8 @@ class DB {
      * @param options Options
      */
     constructor(path, options) {
-        if (!path_1.extname(path).startsWith("."))
-            path = path_1.resolve(path, "db.json");
+        if (!(0, path_1.extname)(path).startsWith("."))
+            path = (0, path_1.resolve)(path, "db.json");
         if (!options)
             options = {
                 writeonchange: !1,
@@ -40,17 +40,15 @@ class DB {
                 debug: !1,
             };
         this.opt = options;
-        this.path = path_1.resolve(path);
-        this.backupdir = path_1.resolve(path, "../backup");
+        this.path = (0, path_1.resolve)(path);
+        this.backupdir = (0, path_1.resolve)(path, "../backup");
         mkdir(this.backupdir);
         if (options.debug)
-            this.debugger = new emitdebugger_1.default(path_1.resolve(this.backupdir, "./file.log"));
-        if (fs_1.default.existsSync(this.path)) {
+            this.debugger = new emitdebugger_1.default((0, path_1.resolve)(this.backupdir, "./file.log"));
+        if (fs_1.default.existsSync(this.path))
             this.JSON(JSON.parse(fs_1.default.readFileSync(this.path, "utf-8")));
-        }
-        else {
+        else
             fs_1.default.writeFileSync(this.path, "[]");
-        }
         this.save();
         if (options.saveInterval)
             setInterval(() => this.save(), this.opt.saveInterval);
@@ -62,8 +60,9 @@ class DB {
         const self = this;
         const date = new Date();
         const data = this.toString();
-        const backupfile = path_1.resolve(this.backupdir, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.json`);
-        fs_1.default.copyFileSync(this.path, backupfile);
+        const backupfile = (0, path_1.resolve)(this.backupdir, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.json`);
+        if (fs_1.default.existsSync(this.path))
+            fs_1.default.copyFileSync(this.path, backupfile);
         if (this.debugger)
             this.debugger.newdebug("Debug", `Saving ${data}`);
         fs_1.default.writeFile(this.path, data, (Err) => {
