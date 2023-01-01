@@ -9,14 +9,12 @@ describe("Array checks", () => {
     debug.data = [];
     debug.newdebug("Debug", "hi");
     assert.equal(debug.data[0], `${new Date()} Debug hi`);
-    if (existsSync(debug.file)) rmSync(debug.file);
   });
 
   it("error", () => {
     debug.data = [];
     debug.newdebug("Error", "hi");
     assert.equal(debug.data[0], `${new Date()} Error hi`);
-    if (existsSync(debug.file)) rmSync(debug.file);
   });
 });
 
