@@ -1,163 +1,147 @@
-import fs from "fs";
+import FileMan from './fileman';
+import { resolve } from "path";
 import Debugger from "./emitdebugger";
-import { resolve, sep, extname } from "path";
+import { randomUUID } from "crypto";
 
-export interface Config {
-  writeonchange?: boolean;
-  humanReadable?: boolean;
-  saveInterval?: number;
-  debug?: boolean;
+export interface Opts {
+  debug: boolean;
+  filename: string;
+  readFile: boolean;
+  inMemoryOnly: boolean;
+  timestampData: boolean;
 }
 
-export type Innerdata<A> = A & { id: string };
+export interface DBStore {
+  _id: string;
+}
 
-export class DB<T> {
-  opt: Config;
-  path: string;
-  data: Innerdata<T>[] = [];
-  debugger?: Debugger;
+const defaultOpts: Partial<Opts> = {
+  debug: false,
+  readFile: true,
+  inMemoryOnly: false,
+  timestampData: true
+}
 
-  /**
-   * Constructor function
-   * @param path path where file should be saved
-   * @param options Options
-   */
-  constructor(path: string, options?: Config) {
-    if (!extname(path).startsWith(".")) path = resolve(path, "db.json");
+export class DB<T extends DBStore> {
+  debug: Debugger;
+  db: T[];
+  file: FileMan<T>;
+  constructor(options: Partial<Opts> | string) {
+    if (typeof options == "string") options = { filename: options };
 
-    if (!options)
-      options = {
-        writeonchange: !1,
-        humanReadable: !1,
-        saveInterval: null,
-        debug: !1,
-      };
+    options = Object.assign(defaultOpts, options);
 
-    this.opt = options;
+    if (options.filename && options.inMemoryOnly) {
+      console.warn("Cannot use options.filename with options.inMemoryOnly");
+      options.inMemoryOnly = false;
+    };
 
-    this.path = resolve(path);
+    if (options.inMemoryOnly && options.debug) {
+      console.warn("Cannot use options.debug and options.inMemoryOnly options in DB");
+      options.debug = false;
+    };
 
-    if (options.debug)
-      this.debugger = new Debugger(resolve(process.cwd(), "./file.log"));
+    if (options.debug) {
+      this.debug = new Debugger(options.filename ? resolve(options.filename, "./debug.log") : resolve(__dirname, "./debug.log"), options.inMemoryOnly);
+    };
 
-    if (fs.existsSync(this.path)) this.JSON(JSON.parse(fs.readFileSync(this.path, "utf-8")));
-    else fs.writeFileSync(this.path, "[]");
+    if (options.inMemoryOnly !== true) {
+      this.file = new FileMan<T>(options.filename, {
+        readInitFile: options.readFile
+      });
+    }
 
-    this.save();
-
-    if (options.saveInterval) setInterval(() => this.save(), this.opt.saveInterval);
+    this.db = [];
   }
 
-  /**
-   * save file into the current file path
-   */
-  save() {
-    const self = this;
-    const date = new Date();
-    const data = this.toString();
+  insert(doc: T) {
+    const toInsert: T = Object.assign({
+      _id: randomUUID()
+    }, doc);
+    if (this.debug) this.debug.newdebug("Debug", "Inserting document with id " + toInsert._id)
+    this.db.push(toInsert);
+    if (this.file) this.file.append(toInsert);
+    return toInsert._id;
+  };
 
-    if (this.debugger) this.debugger.newdebug("Debug", `Saving ${data}`);
-
-    fs.writeFile(this.path, data, (Err) => {
-      if (Err && self.debugger)
-        self.debugger.newdebug("Error", JSON.stringify(Err));
-    });
-
-    return this;
-  }
-
-  /**
-   * check if the db has a id
-   * @param id id to check
-   * @returns {boolean} boolean indicating if id exists
-   */
-  has(id: string): boolean {
-    if (this.opt.debug)
-      this.debugger.newdebug("Debug", `Finding if ${id} exists`);
-
-    return this.data.some((x) => x.id == id);
-  }
-
-  /**
-   * get document from database with the given id
-   * @param id id to fetch
-   */
-  get(id: string) {
-    if (this.opt.debug) this.debugger.newdebug("Debug", `Fetching ${id}`);
-
-    return this.data.find((x) => x.id == id);
-  }
-
-  /**
-   * set a id to a given val in db
-   * @param id id to save
-   * @param val Document to save
-   */
-  set(id: string, val: T) {
-    this.data.push(
-      Object.assign(val, {
-        id,
+  find(doc: Partial<T>) {
+    if (this.debug) this.debug.newdebug("Debug", "Finding using " + doc)
+    let currentDB = this.db;
+    for (let i = 0, dockeys = Object.keys(doc); i < dockeys.length; i++) {
+      const key = dockeys[i];
+      const search = (doc[key]);
+      currentDB = currentDB.filter((v) => {
+        if (Reflect.has(v, key) && search == v[key]) {
+          return true;
+        };
+        return false;
       })
-    );
-
-    if (this.opt.debug)
-      this.debugger.newdebug("Debug", `Set ${id} to ${JSON.stringify(val)}`);
-    if (this.opt.writeonchange) this.save();
-
-    return this;
+    }
+    return currentDB;
   }
 
-  /**
-   * deleteAll data in db
-   */
-  deleteAll() {
-    this.data = [];
-
-    if (this.opt.debug) this.debugger.newdebug("Debug", `Deleting all`);
-    if (this.opt.writeonchange) this.save();
-
-    return this;
+  findIndex(doc: Partial<T>) {
+    const listOfIndexes: number[] = [];
+    let currentDB = this.db;
+    for (let i = 0, dockeys = Object.keys(doc); i < dockeys.length; i++) {
+      const key = dockeys[i];
+      currentDB.forEach((v, i) => {
+        if (Reflect.has(v, key) && doc[key] == v[key]) {
+          listOfIndexes.push(i);
+        };
+      });
+    }
+    return listOfIndexes;
   }
 
-  /**
-   * delete a document with the specified id
-   * @param id id to delete
-   */
-  delete(id: string) {
-    this.data = this.data.filter((x) => x.id != id);
-
-    if (this.opt.debug) this.debugger.newdebug("Debug", `Deleting ${id}`);
-    if (this.opt.writeonchange) this.save();
-
-    return this;
+  count(doc: Partial<T>) {
+    if (this.debug) this.debug.newdebug("Debug", "Counting using " + doc);
+    let count = 0;
+    for (let i = 0, dockeys = Object.keys(doc); i < dockeys.length; i++) {
+      const key = dockeys[i];
+      this.db.forEach((v) => {
+        if (Reflect.has(v, key) && doc[key] == v[key]) count++
+      })
+    }
+    return count;
   }
 
-  /**
-   * stringify the db
-   */
-  toString() {
-    if (this.opt.debug) this.debugger.newdebug("Debug", `Converting to string`);
+  update(doc: T, updated: T) {
+    const self = this;
+    let numAffected = 0;
 
-    return this.opt.humanReadable
-      ? JSON.stringify(this.data, null, 4)
-      : JSON.stringify(this.data);
+    const searched = this.findIndex(doc);
+    const updatedKeys = Object.keys(updated);
+
+    for (let i = 0; i < searched.length; i++) {
+      const index = searched[i];
+      numAffected++;
+      for (let i = 0; i < updatedKeys.length; i++) {
+        const key = updatedKeys[i];
+        if (key == 'prototype' || key == '__proto__') {
+          self.debug.newdebug("Debug", "Cannot update prototype");
+          continue;
+        }
+        self.db[index][key] = updated[key];
+      }
+    }
+
+    return numAffected;
   }
 
-  /**
-   * save/read json from the db
-   * @param storage optional way to change the db
-   */
-  JSON(storage?: Innerdata<T>[]) {
-    if (this.opt.debug)
-      this.debugger.newdebug(
-        "Debug",
-        storage ? "returning JSON" : `replacing ${JSON.stringify(this.data)} -> ${JSON.stringify(storage)}`
-      );
+  delete(doc: T) {
+    const self = this;
+    let numAffected = 0;
+    const searched = this.findIndex(doc);
+    for (let i = 0; i < self.length; i++) {
+      numAffected++;
+      self.db.splice(searched[i], 1);
+    }
+    return numAffected;
+  }
 
-    if (!storage) return this.data;
-    this.data = storage;
-    if (this.opt.writeonchange) this.save();
-    return this.data;
+  get length() {
+    return this.db.length
   }
 }
 

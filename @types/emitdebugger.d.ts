@@ -1,7 +1,9 @@
+import FileMan from "./fileman";
 export default class Debugger {
-    file: string;
+    file: FileMan<string[]>;
     data: string[];
-    constructor(file?: string);
+    inmem: boolean;
+    constructor(file?: string, inMemoryOnly?: boolean);
     save(): void;
     newdebug(method: "Error" | "Debug", data: string): void;
 }
